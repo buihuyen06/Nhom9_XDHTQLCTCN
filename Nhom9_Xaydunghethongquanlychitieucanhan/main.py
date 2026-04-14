@@ -8,7 +8,6 @@ from Page.add import AddPage
 from Page.stats import StatsPage
 from Page.account import AccountPage
 
-
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
