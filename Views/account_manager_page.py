@@ -68,11 +68,8 @@ class AccountManagerPage(tk.Frame):
         for i in self.tree.get_children():
             self.tree.delete(i)
         
-        df = self.query.get_all()
-        for _, row in df.iterrows():
-            self.tree.insert("", "end", values=(int(row["id"]), row["ho_va_ten"], row["email"], row["trang_thai"]))
-        
-        self.clear_form()
+
+
 
     def search(self):
         """Tìm kiếm theo tên"""

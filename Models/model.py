@@ -1,12 +1,10 @@
 import pandas as pd
-
-
 class SpendingModel:
     def __init__(self):
         # Hệ thống đăng nhập
         self.users = {"admin": "123"}
 
-        # Dữ liệu Chi tiêu (Giống ảnh demo)
+        # Dữ liệu Chi tiêu
         self.transactions = [
             {"name": "Ăn trưa", "price": 35000, "type": "Chi"},
             {"name": "Lương tháng", "price": 1000000, "type": "Thu"}

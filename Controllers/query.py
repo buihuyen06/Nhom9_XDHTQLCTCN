@@ -71,10 +71,3 @@ class Query:
             data = data[self.title]
         max_value = data[title_keyword].max()
         return max_value if pd.notna(max_value) else 0
-
-    def get_all(self):
-        """Lấy toàn bộ dữ liệu"""
-        data = pd.read_csv(self.file_path)
-        if self.title:
-            data = data[self.title]
-        return data

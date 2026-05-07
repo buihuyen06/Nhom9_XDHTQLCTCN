@@ -5,7 +5,9 @@ from Views.login import LoginPage
 from Views.home_page import HomePage
 from Views.account_manager_page import AccountManagerPage
 from Views.register_page import RegisterPage
-
+from Views.Inputpage import InputPage
+from Views.Historypage import HistoryPage
+from Views.Analysispage import AnalysisPage
 
 class MainApp(tk.Tk):
     def __init__(self):
@@ -27,9 +29,11 @@ class MainApp(tk.Tk):
         self.pages["LoginPage"] = LoginPage(self.container, self.controller, self.login_ok,
                                             lambda: self.show("RegisterPage"))
         self.pages["RegisterPage"] = RegisterPage(self.container, self.controller, lambda: self.show("LoginPage"))
-        self.pages["HomePage"] = HomePage(self.container, self.controller)
-        self.pages["AccountManagerPage"] = AccountManagerPage(self.container, self.controller)
-
+        self.pages["HomePage"] = HomePage(self.container, self)
+        self.pages["AccountManagerPage"] = AccountManagerPage(self.container, self)
+        self.pages["InputPage"] = InputPage(self.container, self)
+        self.pages["HistoryPage"] = HistoryPage(self.container, self)
+        self.pages["AnalysisPage"] = AnalysisPage(self.container, self)
         for f in self.pages.values(): f.grid(row=0, column=0, sticky="nsew")
         self.show("LoginPage")
 
