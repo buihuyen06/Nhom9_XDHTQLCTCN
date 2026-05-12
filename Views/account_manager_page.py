@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from Controllers.query import Query
+from Models.query import Query
 
 
 class AccountManagerPage(tk.Frame):
