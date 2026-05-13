@@ -4,11 +4,31 @@ import tkinter as tk
 class HomePage(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent, bg="#FFF9C4")
-        self.ctrl = controller
+        self.ctrl = controller  # MainApp
         self.render_ui()
 
+        self.banner = tk.Label(
+        self,
+        text="💰 Tiền vào có kế hoạch, tiền ra có kiểm soát 💰\n✨ Một xu tiết kiệm là một xu kiếm được ✨",
+        font=("Arial", 14, "bold"),
+        fg="#2E7D32",
+        bg="#FFF9C4",
+        justify="center"
+    )
+        self.banner.pack(pady=15)
+
+        self.colors = ["#E91E63", "#F06292", "#EC407A", "#AD1457"]
+        self.i = 0
+
+        self.animate_banner()  # gọi chạy animation
+
+
+    def animate_banner(self):
+        self.banner.config(fg=self.colors[self.i])
+        self.i = (self.i + 1) % len(self.colors)
+        self.after(500, self.animate_banner)
     def render_ui(self):
-        tk.Label(self, text="TỔNG QUAN TÀI CHÍNH", font=("Arial", 18, "bold"), fg="#F48FB1", bg="#FFF9C4").pack(pady=10)
+        tk.Label(self, text="TỔNG QUAN TÀI CHÍNH", font=("Comic Sans MS", 18, "bold"), fg="black", bg="#FFF9C4").pack(pady=10)
 
         # Khung Số dư
         self.f_sd = tk.Frame(self, bg="white", highlightthickness=1)
@@ -29,21 +49,18 @@ class HomePage(tk.Frame):
 
         # --- PHẦN SỬA LỖI NÚT BẤM ---
         tk.Button(self,
-            text="➕ NHẬP LIỆU",
-            bg="#F8BBD0",
-            # Lệnh này sẽ gọi hàm show() trong MainApp để bật InputPage lên
-            command=lambda: self.ctrl.show("InputPage")
-        ).pack(fill="x", padx=40, pady=10)
+                  text="➕ NHẬP LIỆU",
+                  bg="#F8BBD0",
+                  command=lambda: self.ctrl.show("InputPage")
+                  ).pack(fill="x", padx=40, pady=10)
         tk.Button(self,
                   text="📋 LỊCH SỬ",
                   bg="#81D4FA",
-                  # Lệnh này sẽ gọi hàm show() trong MainApp để bật InputPage lên
                   command=lambda: self.ctrl.show("HistoryPage")
                   ).pack(fill="x", padx=40, pady=10)
         tk.Button(self,
                   text="📊 PHÂN TÍCH",
                   bg="#CE93D8",
-                  # Lệnh này sẽ gọi hàm show() trong MainApp để bật InputPage lên
                   command=lambda: self.ctrl.show("AnalysisPage")
                   ).pack(fill="x", padx=40, pady=10)
         buttons = [
@@ -54,16 +71,14 @@ class HomePage(tk.Frame):
             if txt == "🔄 LÀM MỚI":
                 cmd = self.refresh
             else:
-                # Lệnh chuyển trang: gọi hàm show_frame của controller
-                cmd = lambda t=target: self.ctrl.show_frame(t)
-
-            tk.Button(self, text=txt, bg=clr, relief="flat", height=2, command=cmd).pack(fill="x", padx=20, pady=2)
+                cmd = lambda t=target: self.ctrl.show(t)
+            tk.Button(self, text=txt, bg=clr, command=cmd).pack(fill="x", padx=40, pady=5)
 
     def refresh(self):
-        # Giả định dữ liệu từ model
-        thu = sum(t['price'] for t in self.ctrl.model.transactions if t['type'] == 'Thu')
-        chi = sum(t['price'] for t in self.ctrl.model.transactions if t['type'] == 'Chi')
-        bal = self.ctrl.model.df_accounts["Số dư"].sum()
-        self.lbl_sd.config(text=f"{thu - chi + bal:,.0f}đ")
-        self.lbl_thu.config(text=f"{thu:,.0f}đ")
-        self.lbl_chi.config(text=f"{chi:,.0f}đ")
+        # Lấy SpendingController từ MainApp
+        thu, chi, so_du = self.ctrl.controller.get_summary()
+
+        # Cập nhật các label với dữ liệu mới
+        self.lbl_sd.config(text=f"{so_du}đ")
+        self.lbl_thu.config(text=f"{thu}đ")
+        self.lbl_chi.config(text=f"{chi}đ")

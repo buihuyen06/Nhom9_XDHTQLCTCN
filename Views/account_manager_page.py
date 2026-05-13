@@ -7,7 +7,7 @@ class AccountManagerPage(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.ctrl = controller
-        self.query = Query("accounts.csv", ["id", "ho_va_ten", "email", "trang_thai"])
+        self.query = Query("qltk.csv", ["id", "ho_va_ten", "email", "trang_thai"])
         self.selected_id = None
 
         tk.Label(self, text="QUẢN LÝ TÀI KHOẢN", font=("Arial", 14, "bold")).pack(pady=10)

@@ -1,5 +1,4 @@
 import tkinter as tk
-from Models.model import SpendingModel
 from Controllers.controller import SpendingController
 from Views.login import LoginPage
 from Views.home_page import HomePage
@@ -14,12 +13,11 @@ class MainApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("QUẢN LÝ TÀI CHÍNH")
-        self.geometry("450x650")
+        self.geometry("500x450")
 
-        # Khởi tạo MVC
-        self.model = SpendingModel()
-        self.controller = SpendingController(self.model)
 
+
+        self.controller = SpendingController()
         # Thanh điều hướng (Navigation Bar)
         self.nav = tk.Frame(self, bg="#333", height=50)
 
@@ -58,10 +56,10 @@ class MainApp(tk.Tk):
 
         self.nav.pack(side="bottom", fill="x")
 
-        tk.Button(self.nav, text="📊 CHI TIÊU", bg="#81D4FA",
+        tk.Button(self.nav, text="📊 TRANG CHỦ", bg="#81D4FA",
                   command=lambda: self.show("HomePage")).pack(side="left", expand=True, fill="both")
 
-        tk.Button(self.nav, text="👥 TÀI KHOẢN", bg="#A5D6A7",
+        tk.Button(self.nav, text="👥 QUẢN LÝ TÀI KHOẢN", bg="#A5D6A7",
                   command=lambda: self.show("AccountManagerPage")).pack(side="left", expand=True, fill="both")
 
         self.show("HomePage")
