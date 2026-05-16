@@ -14,4 +14,4 @@ class InputPage(tk.Frame):
         self.entry_price.pack(pady=5)
 
         # Nút để quay về Trang Chủ
-        tk.Button(self, text="⬅ QUAY LẠI", command=lambda: self.ctrl.show_frame("HomePage")).pack(pady=20)
+        tk.Button(self, text="⬅ QUAY LẠI", command=lambda: self.ctrl.show("HomePage")).pack(pady=20)
