@@ -13,7 +13,7 @@ class MainApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("QUẢN LÝ TÀI CHÍNH")
-        self.geometry("500x450")
+        self.geometry("500x520")
 
 
 
