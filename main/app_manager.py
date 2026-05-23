@@ -2,11 +2,11 @@ import tkinter as tk
 from Controllers.controller import SpendingController
 from Views.login import LoginPage
 from Views.home_page import HomePage
-from Views.account_manager_page import AccountManagerPage
 from Views.register_page import RegisterPage
 from Views.Inputpage import InputPage
 from Views.Historypage import HistoryPage
 from Views.Analysispage import AnalysisPage
+from Views.Admin_page import AdminPage
 
 
 class MainApp(tk.Tk):
@@ -33,18 +33,27 @@ class MainApp(tk.Tk):
 
     def _init_frames(self):
         """Khởi tạo tất cả các View và đưa vào stack grid"""
-        self.pages["LoginPage"] = LoginPage(
-            self.container, self.controller, self.login_ok, lambda: self.show("RegisterPage")
+        self.page = LoginPage(
+            parent=self.container,
+            controller=self.controller,
+            on_user_login=self.login_ok,  # Gọi hàm xử lý đăng nhập cho user bình thường
+            on_admin_login=lambda: self.show("AdminPage"),
+            go_reg=lambda: self.show("RegisterPage")
         )
+
+        self.pages["LoginPage"] = self.page
         self.pages["RegisterPage"] = RegisterPage(
-            self.container, self.controller, lambda: self.show("LoginPage")
-        )
+            self.container, self.controller, lambda: self.show("LoginPage"))
         self.pages["HomePage"] = HomePage(self.container, self)
-        self.pages["AccountManagerPage"] = AccountManagerPage(self.container, self)
         self.pages["InputPage"] = InputPage(self.container, self)
         self.pages["HistoryPage"] = HistoryPage(self.container, self)
         self.pages["AnalysisPage"] = AnalysisPage(self.container, self)
-
+        # --- SỬA LẠI ĐOẠN KHỞI TẠO ADMINPAGE TRONG MAINAPP ---
+        self.pages["AdminPage"] = AdminPage(
+            parent=self.container,
+            controller=self,  # Truyền chính MainApp vào làm controller điều hướng
+            go_login=lambda: self.logout()  # Dùng lambda để gọi chính xác hàm logout của MainApp
+        )
         for f in self.pages.values():
             f.grid(row=0, column=0, sticky="nsew")
 
@@ -59,14 +68,19 @@ class MainApp(tk.Tk):
         tk.Button(self.nav, text="📊 TRANG CHỦ", bg="#81D4FA",
                   command=lambda: self.show("HomePage")).pack(side="left", expand=True, fill="both")
 
-        tk.Button(self.nav, text="👥 QUẢN LÝ TÀI KHOẢN", bg="#A5D6A7",
-                  command=lambda: self.show("AccountManagerPage")).pack(side="left", expand=True, fill="both")
+        tk.Button(self.nav, text="🚪 ĐĂNG XUẤT", bg="#A5D6A7",
+                  command=lambda: self.show("LoginPage")).pack(side="left", expand=True, fill="both")
 
         self.show("HomePage")
 
+    def logout(self):
+        """Hàm xử lý quy trình đăng xuất sạch sẽ"""
+        self.nav.pack_forget()  # Ẩn thanh menu điều hướng đi
+        self.show("LoginPage")  # Hiển thị lại trang Đăng nhập
     def show(self, name):
         """Hiển thị trang dựa trên tên định nghĩa trong self.pages"""
         f = self.pages[name]
         if hasattr(f, 'refresh'):
             f.refresh()
         f.tkraise()
+

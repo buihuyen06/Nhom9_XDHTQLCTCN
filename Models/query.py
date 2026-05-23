@@ -1,86 +1,46 @@
-
-import pandas as pd
 import os
+import pandas as pd
 
 
-class Query:
-    def __init__(self, file_path, title=None):
+class CSVQuery:
+    def __init__(self, file_path):
+        """Khởi tạo cấu trúc file dữ liệu tài khoản."""
         self.file_path = file_path
-        self.title = title or []
 
-        folder = os.path.dirname(file_path)
-        if folder and not os.path.exists(folder):
-            os.makedirs(folder)
-
+        # Nếu file tkdn.csv chưa tồn tại, tự động tạo mới với các tiêu đề cột mặc định
         if not os.path.exists(self.file_path):
-            pd.DataFrame(columns=self.title).to_csv(self.file_path, index=False)
+            # Cập nhật: Thêm cột 'vaitro' để hỗ trợ phân quyền Admin/User
+            df = pd.DataFrame(columns=["tendn", "mk", "vaitro"])
 
-    def list(self, page=1, page_size=10):
-        data = pd.read_csv(self.file_path)
+            # Đảm bảo thư mục cha (ví dụ thư mục "main") đã được tạo
+            os.makedirs(os.path.dirname(self.file_path), exist_ok=True)
 
-        if self.title:
-            data = data[self.title]
+            # Lưu file với mã hóa utf-8 để tránh lỗi font tiếng Việt
+            df.to_csv(self.file_path, index=False, encoding="utf-8")
 
-        start = (page - 1) * page_size
-        end = start + page_size
+    def _read_file(self):
+        """Hỗ trợ đọc file CSV nội bộ, trả về một DataFrame."""
+        try:
+            return pd.read_csv(self.file_path, encoding="utf-8")
+        except Exception:
+            # Nếu có lỗi đọc file, trả về DataFrame trống đúng cấu trúc
+            return pd.DataFrame(columns=["tendn", "mk", "vaitro"])
 
-        return {
-            "page": page,
-            "page_size": page_size,
-            "total_records": len(data),
-            "total_pages": (len(data) + page_size - 1) // page_size,
-            "data": data.iloc[start:end]
-        }
-
-    def search(self, title_keyword, keyword):
-        data = pd.read_csv(self.file_path)
-
-        result = data[
-            data[title_keyword].astype(str) == str(keyword)
-        ]
-
+    def search(self, field, value):
+        """Tìm kiếm dữ liệu dựa trên tên cột (field) và giá trị cần tìm (value)."""
+        df = self._read_file()
+        # Chuyển đổi toàn bộ cột về dạng chuỗi (str) để so sánh chính xác tuyệt đối
+        result = df[df[field].astype(str) == str(value)]
         return result
 
-    def delete(self, title_keyword, keyword):
-        data = pd.read_csv(self.file_path)
+    def create(self, data_dict):
+        """Thêm một dòng tài khoản mới vào file CSV."""
+        df = self._read_file()
+        # Tạo một DataFrame mới từ dữ liệu người dùng truyền vào
+        new_row = pd.DataFrame([data_dict])
 
-        result = data[
-            data[title_keyword].astype(str) != str(keyword)
-        ]
+        # Nối dòng mới vào DataFrame cũ (dùng pd.concat thay cho append để tránh cảnh báo)
+        df = pd.concat([df, new_row], ignore_index=True)
 
-        result.to_csv(self.file_path, index=False)
-
-        return True
-
-    def update(self, title_keyword, keyword, new_data):
-        data = pd.read_csv(self.file_path)
-
-        mask = data[title_keyword].astype(str) == str(keyword)
-
-        for key, value in new_data.items():
-            data.loc[mask, key] = value
-
-        data.to_csv(self.file_path, index=False)
-
-        return True
-
-    def create(self, new_data):
-        data = pd.read_csv(self.file_path)
-
-        new_row = pd.DataFrame([new_data])
-
-        data = pd.concat([data, new_row], ignore_index=True)
-
-        data.to_csv(self.file_path, index=False)
-
-        return True
-
-    def max(self, title_keyword):
-        data = pd.read_csv(self.file_path)
-
-        if data.empty:
-            return 0
-
-        max_value = data[title_keyword].max()
-
-        return max_value if pd.notna(max_value) else 0
+        # Ghi đè lại vào file CSV
+        df.to_csv(self.file_path, index=False, encoding="utf-8")
