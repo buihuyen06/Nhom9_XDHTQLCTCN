@@ -64,6 +64,7 @@ class HomePage(tk.Frame):
         ngay_hien_tai = (
             datetime.now()
             .strftime("Hôm nay: Thứ %u, Ngày %d/%m/%Y")
+            .replace("Thứ 1", "Thứ Hai")
             .replace("Thứ 7", "Thứ Bảy")
             .replace("Thứ 8", "Chủ Nhật")
         )
