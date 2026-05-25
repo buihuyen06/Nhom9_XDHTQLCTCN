@@ -1,24 +1,17 @@
 import random
 import tkinter as tk
 from datetime import datetime
-
-
 class HomePage(tk.Frame):
-
     def __init__(self, parent, controller):
         super().__init__(parent, bg="#FFF9C4")
         self.ctrl = controller  # MainApp
-
         # Khai báo các thuộc tính phục vụ cho hiệu ứng nhấp nháy chữ banner
         self.colors = ["#E91E63", "#F06292", "#EC407A", "#AD1457"]
         self.i = 0
-
         # Gọi hàm vẽ giao diện
         self.render_ui()
-
         # Gọi chạy hiệu ứng nhấp nháy cho banner
         self.animate_banner()
-
     def lay_loi_chao(self):
         """Tự động đưa ra lời chào theo thời gian thực của máy tính"""
         gio_hien_tai = datetime.now().hour
@@ -28,7 +21,6 @@ class HomePage(tk.Frame):
             return "🌤️ Chiều rồi, kiểm tra chi tiêu hôm nay chưa?"
         else:
             return "🌙 Tối rồi, đừng quên ghi lại chi tiêu nhé!"
-
     def lay_meo_ngau_nhien(self):
         """Trả về một mẹo tiết kiệm tiền ngẫu nhiên từ danh sách"""
         cac_meo = [
@@ -41,18 +33,15 @@ class HomePage(tk.Frame):
             "Hạn chế sa đà vào các chương trình giảm giá không cần thiết.",
         ]
         return "💡 Mẹo hôm nay: " + random.choice(cac_meo)
-
     def lam_moi_giao_dien(self):
         """Hàm xử lý khi bấm nút 'LÀM MỚI'"""
         self.lbl_loi_chao.config(text=self.lay_loi_chao())
         self.lbl_meo.config(text=self.lay_meo_ngau_nhien())
-
     def animate_banner(self):
         """Hiệu ứng chữ đổi màu động cho banner"""
         self.banner.config(fg=self.colors[self.i])
         self.i = (self.i + 1) % len(self.colors)
         self.after(500, self.animate_banner)
-
     def render_ui(self):
         # Tiêu đề trang
         tk.Label(

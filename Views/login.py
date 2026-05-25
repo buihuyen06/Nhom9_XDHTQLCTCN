@@ -37,7 +37,6 @@ class LoginPage(tk.Frame):
         password = self.p_ent.get()
         role = self.role_cb.get()
 
-        # --- ĐÃ SỬA LỖI Ở ĐÂY: Thêm logic kiểm tra đăng nhập ---
         if self.ctrl.check_login(username, password, role):
             if role == "Quản trị hệ thống":
                 self.on_admin_login()

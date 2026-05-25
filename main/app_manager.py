@@ -14,9 +14,6 @@ class MainApp(tk.Tk):
         super().__init__()
         self.title("QUẢN LÝ TÀI CHÍNH")
         self.geometry("500x520")
-
-
-
         self.controller = SpendingController()
         # Thanh điều hướng (Navigation Bar)
         self.nav = tk.Frame(self, bg="#333", height=50)
