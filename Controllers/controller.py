@@ -17,7 +17,7 @@ class SpendingController:
         if not result.empty:
             user = result.iloc[0]
             is_pass_match = str(user["mk"]) == str(p)
-            db_role = str(user("vaitro"))
+            db_role = str(user.get("vaitro", "Người dùng"))
             is_role_match = (db_role == role)
             return is_pass_match and is_role_match
         return False
