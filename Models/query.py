@@ -1,46 +1,48 @@
+import csv
 import os
-import pandas as pd
 
 
-class CSVQuery:
-    def __init__(self, file_path):
-        """Khởi tạo cấu trúc file dữ liệu tài khoản."""
-        self.file_path = file_path
+class FinanceModel:
+    def __init__(self):
+        # Đường dẫn tới file csv trong thư mục data
+        self.file_path = 'data/data.csv'
+        self.ensure_file_exists()
 
-        # Nếu file tkdn.csv chưa tồn tại, tự động tạo mới với các tiêu đề cột mặc định
+    def ensure_file_exists(self):
+        # Tạo thư mục data nếu chưa có
+        if not os.path.exists('data'):
+            os.makedirs('data')
+        # Tạo file csv với tiêu đề nếu chưa có
         if not os.path.exists(self.file_path):
-            # Cập nhật: Thêm cột 'vaitro' để hỗ trợ phân quyền Admin/User
-            df = pd.DataFrame(columns=["tendn", "mk", "vaitro"])
+            with open(self.file_path, mode='w', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                writer.writerow(['ID', 'Ngay', 'NoiDung', 'Loai', 'SoTien'])
 
-            # Đảm bảo thư mục cha (ví dụ thư mục "main") đã được tạo
-            os.makedirs(os.path.dirname(self.file_path), exist_ok=True)
+    def get_all(self):
+        records = []
+        with open(self.file_path, mode='r', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            next(reader, None)  # Bỏ qua dòng tiêu đề
+            for row in reader:
+                if row:  # Tránh dòng trống
+                    records.append(row)
+        return records
 
-            # Lưu file với mã hóa utf-8 để tránh lỗi font tiếng Việt
-            df.to_csv(self.file_path, index=False, encoding="utf-8")
+    def add(self, ngay, noidung, loai, sotien):
+        records = self.get_all()
+        # Tự động tạo ID tăng dần
+        new_id = 1 if not records else int(records[-1][0]) + 1
 
-    def _read_file(self):
-        """Hỗ trợ đọc file CSV nội bộ, trả về một DataFrame."""
-        try:
-            return pd.read_csv(self.file_path, encoding="utf-8")
-        except Exception:
-            # Nếu có lỗi đọc file, trả về DataFrame trống đúng cấu trúc
-            return pd.DataFrame(columns=["tendn", "mk", "vaitro"])
+        with open(self.file_path, mode='a', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            writer.writerow([new_id, ngay, noidung, loai, sotien])
 
-    def search(self, field, value):
-        """Tìm kiếm dữ liệu dựa trên tên cột (field) và giá trị cần tìm (value)."""
-        df = self._read_file()
-        # Chuyển đổi toàn bộ cột về dạng chuỗi (str) để so sánh chính xác tuyệt đối
-        result = df[df[field].astype(str) == str(value)]
-        return result
-
-    def create(self, data_dict):
-        """Thêm một dòng tài khoản mới vào file CSV."""
-        df = self._read_file()
-        # Tạo một DataFrame mới từ dữ liệu người dùng truyền vào
-        new_row = pd.DataFrame([data_dict])
-
-        # Nối dòng mới vào DataFrame cũ (dùng pd.concat thay cho append để tránh cảnh báo)
-        df = pd.concat([df, new_row], ignore_index=True)
-
-        # Ghi đè lại vào file CSV
-        df.to_csv(self.file_path, index=False, encoding="utf-8")
+    def delete(self, trans_id):
+        records = self.get_all()
+        # Ghi lại toàn bộ file, bỏ qua dòng có ID trùng khớp
+        with open(self.file_path, mode='w', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            writer.writerow(['ID', 'Ngay', 'NoiDung', 'Loai', 'SoTien'])
+            for r in records:
+                if str(r[0]) != str(trans_id):
+                    writer.writerow(r)
