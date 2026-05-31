@@ -5,72 +5,73 @@ from datetime import datetime
 
 class Thu_Page(tk.Frame):
     def __init__(self, parent, controller):
-        super().__init__(parent, bg="#f0f2f5")
+        # Thiết lập nền chính của toàn trang
+        super().__init__(parent, bg="#FDEFF2")
         self.controller = controller
         self.setup_ui()
 
     def setup_ui(self):
-        # 1. TIÊU ĐỀ
-        tk.Label(self, text="💰 QUẢN LÝ CÁC KHOẢN THU NHẬP", font=("Arial", 18, "bold"),
-                 fg="#2c3e50", bg="#f0f2f5").pack(pady=15)
+        bg_pastel = "#FDEFF2"
+        fg_dark = "#5A2B36"
 
-        # 2. THANH CÔNG CỤ (Nút chức năng)
-        toolbar = tk.Frame(self, bg="#f0f2f5")
-        toolbar.pack(pady=5, fill="x", padx=20)
+        # 1. TIÊU ĐỀ TRANG
+        tk.Label(self, text="💰 QUẢN LÝ CÁC KHOẢN THU NHẬP", font=("Arial", 24, "bold"),
+                 fg=fg_dark, bg=bg_pastel).pack(pady=20)
 
-        tk.Button(toolbar, text="➕ THÊM MỚI", bg="#2ecc71", fg="white", font=("Arial", 9, "bold"), width=12,
-                  command=self.controller.show_add_dialog).pack(side="left", padx=4)
-        tk.Button(toolbar, text="🔧 CHỈNH SỬA", bg="#3498db", fg="white", font=("Arial", 9, "bold"), width=12,
-                  command=self.controller.show_edit_dialog).pack(side="left", padx=4)
-        tk.Button(toolbar, text="❌ XÓA BẢN GHI", bg="#e74c3c", fg="white", font=("Arial", 9, "bold"), width=12,
-                  command=self.controller.delete_record).pack(side="left", padx=4)
-        tk.Button(toolbar, text="🔍 TÌM KIẾM", bg="#f1c40f", fg="black", font=("Arial", 9, "bold"), width=12,
-                  command=self.controller.show_search_dialog).pack(side="left", padx=4)
-        tk.Button(toolbar, text="🔄 TẢI LẠI", bg="#95a5a6", fg="white", font=("Arial", 9, "bold"), width=12,
-                  command=self.controller.load_data).pack(side="left", padx=4)
+        # 2. THANH CÔNG CỤ (Các nút chức năng)
+        toolbar = tk.Frame(self, bg=bg_pastel)
+        toolbar.pack(pady=10, fill="x", padx=20)
 
-        # 3. THANH LỌC THÁNG/NĂM
-        filter_frame = tk.Frame(self, bg="#f0f2f5")
-        filter_frame.pack(pady=10, fill="x", padx=20)
+        tk.Button(toolbar, text="➕ THÊM MỚI", bg="#2ecc71", fg="white", font=("Arial", 11, "bold"), width=15,
+                  command=self.controller.show_add_dialog).pack(side="left", padx=6)
+        tk.Button(toolbar, text="🔧 CHỈNH SỬA", bg="#3498db", fg="white", font=("Arial", 11, "bold"), width=15,
+                  command=self.controller.show_edit_dialog).pack(side="left", padx=6)
+        tk.Button(toolbar, text="❌ XÓA BẢN GHI", bg="#e74c3c", fg="white", font=("Arial", 11, "bold"), width=15,
+                  command=self.controller.delete_record).pack(side="left", padx=6)
+        tk.Button(toolbar, text="🔍 TÌM KIẾM", bg="#f1c40f", fg="black", font=("Arial", 11, "bold"), width=15,
+                  command=self.controller.show_search_dialog).pack(side="left", padx=6)
+        tk.Button(toolbar, text="🔄 TẢI LẠI", bg="#95a5a6", fg="white", font=("Arial", 11, "bold"), width=15,
+                  command=self.controller.load_data).pack(side="left", padx=6)
 
-        tk.Label(filter_frame, text="Chọn Tháng:", bg="#f0f2f5").pack(side="left")
-        self.combo_m = ttk.Combobox(filter_frame, values=list(range(1, 13)), width=5)
+        # 3. THANH BỘ LỌC THÁNG/NĂM
+        filter_frame = tk.Frame(self, bg=bg_pastel)
+        filter_frame.pack(pady=15, fill="x", padx=20)
+
+        tk.Label(filter_frame, text="Chọn Tháng:", font=("Arial", 12), fg=fg_dark, bg=bg_pastel).pack(side="left")
+        self.combo_m = ttk.Combobox(filter_frame, values=list(range(1, 13)), width=6)
         self.combo_m.set(datetime.now().month)
-        self.combo_m.pack(side="left", padx=5)
+        self.combo_m.pack(side="left", padx=8)
 
-        tk.Label(filter_frame, text="Năm:", bg="#f0f2f5").pack(side="left")
-        self.combo_y = ttk.Combobox(filter_frame, values=[2025, 2026, 2027], width=6)
+        tk.Label(filter_frame, text="Năm:", font=("Arial", 12), fg=fg_dark, bg=bg_pastel).pack(side="left")
+        self.combo_y = ttk.Combobox(filter_frame, values=[2025, 2026, 2027], width=8)
         self.combo_y.set(2026)
-        self.combo_y.pack(side="left", padx=5)
+        self.combo_y.pack(side="left", padx=8)
 
-        tk.Button(filter_frame, text="LỌC THÁNG",
+        tk.Button(filter_frame, text="LỌC THÁNG", font=("Arial", 11, "bold"), bg="#FFF0F2", fg=fg_dark, bd=1,
                   command=lambda: self.controller.filter_by_month(self.combo_m.get(), self.combo_y.get())).pack(
-            side="left", padx=10)
+            side="left", padx=15)
 
-        # 4. NHÃN HIỂN THỊ TỔNG TIỀN (Quan trọng để Controller cập nhật)
-        # --- TẠO MỘT KHUNG NHỎ CHỨA CÁC ĐÒNG TỔNG TIỀN NẰM BÊN PHẢI ---
-        totals_frame = tk.Frame(filter_frame, bg="#f0f2f5")
+        # 4. KHU VỰC HIỂN THỊ TỔNG TIỀN THU NHẬP
+        totals_frame = tk.Frame(filter_frame, bg=bg_pastel)
         totals_frame.pack(side="right", padx=20)
 
-        # 1. Chữ TỔNG THU nằm trên cùng
-        self.lbl_total = tk.Label(totals_frame, text="TỔNG THU: 0 VND", font=("Arial", 12, "bold"),
-                                  fg="#2c3e50", bg="#f0f2f5")
-        self.lbl_total.pack(side="top", anchor="e", pady=2)  # side="top" để xếp dọc, anchor="e" để căn thẳng lề phải
+        self.lbl_total = tk.Label(totals_frame, text="TỔNG THU: 0 VND", font=("Arial", 16, "bold"),
+                                  fg=fg_dark, bg=bg_pastel)
+        self.lbl_total.pack(side="top", anchor="e", pady=2)
 
-        # 2. Tổng Ngân hàng nằm ngay phía dưới
-        self.lbl_bank = tk.Label(totals_frame, text="🏦 Ngân hàng: 0 đ", font=("Arial", 10, "bold"),
-                                 fg="#2980b9", bg="#f0f2f5")
+        self.lbl_bank = tk.Label(totals_frame, text="🏦 Ngân hàng: 0 đ", font=("Arial", 13, "bold"),
+                                 fg="#1A5276", bg=bg_pastel) # Màu xanh sẫm đọc rõ trên nền hồng
         self.lbl_bank.pack(side="top", anchor="e", pady=2)
 
-        # 3. Tổng Tiền mặt nằm dưới cùng
-        self.lbl_cash = tk.Label(totals_frame, text="💵 Tiền mặt: 0 đ", font=("Arial", 10, "bold"),
-                                 fg="#27ae60", bg="#f0f2f5")
+        self.lbl_cash = tk.Label(totals_frame, text="💵 Tiền mặt: 0 đ", font=("Arial", 13, "bold"),
+                                 fg="#196F3D", bg=bg_pastel) # Màu xanh lá sẫm
         self.lbl_cash.pack(side="top", anchor="e", pady=2)
-        # 5. BẢNG DỮ LIỆU (Treeview)
+
+        # 5. BẢNG DỮ LIỆU TỔNG HỢP (Kế thừa kích thước chữ lớn từ app_manager)
         table_frame = tk.Frame(self)
         table_frame.pack(pady=10, fill="both", expand=True, padx=20)
 
-        columns = ("id", "ngay", "nguonthu", "sotien","phuongthuc", "ghichu")
+        columns = ("id", "ngay", "nguonthu", "sotien", "phuongthuc", "ghichu")
         self.tree = ttk.Treeview(table_frame, columns=columns, show="headings")
 
         self.tree.heading("id", text="ID")
@@ -80,14 +81,14 @@ class Thu_Page(tk.Frame):
         self.tree.heading("phuongthuc", text="Phương Thức")
         self.tree.heading("ghichu", text="Ghi Chú")
 
-        self.tree.column("id", width=35, anchor=tk.CENTER)
-        self.tree.column("ngay", width=110, anchor=tk.CENTER)
-        self.tree.column("nguonthu", width=220, anchor=tk.W)
-        self.tree.column("sotien", width=150, anchor=tk.E)
-        self.tree.column("phuongthuc", width=100, anchor=tk.CENTER)
-        self.tree.column("ghichu", width=220, anchor=tk.W)
+        # Độ rộng cột thoải mái cho màn hình 1800x800
+        self.tree.column("id", width=50, anchor=tk.CENTER)
+        self.tree.column("ngay", width=140, anchor=tk.CENTER)
+        self.tree.column("nguonthu", width=300, anchor=tk.W)
+        self.tree.column("sotien", width=180, anchor=tk.E)
+        self.tree.column("phuongthuc", width=140, anchor=tk.CENTER)
+        self.tree.column("ghichu", width=300, anchor=tk.W)
 
-        # Thanh cuộn dọc
         scrollbar = ttk.Scrollbar(table_frame, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=scrollbar.set)
 
@@ -95,5 +96,4 @@ class Thu_Page(tk.Frame):
         scrollbar.pack(side="right", fill="y")
 
     def refresh(self):
-        """Hàm tự động gọi lại khi bồ chuyển tab qua trang này"""
         self.controller.load_data()
