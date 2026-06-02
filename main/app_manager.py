@@ -1,9 +1,12 @@
 import os
 import shutil
 import subprocess
+import pandas as pd
 from tkinter import messagebox, filedialog
 import tkinter as tk
 from tkinter import ttk
+from PIL import Image, ImageTk  # 🔥 1. IMPORT THÊM THƯ VIỆN XỬ LÝ ẢNH
+
 from Controllers.home_controller import HomeController
 from Controllers.login_controller import LoginController
 from Controllers.thu_controller import Thu_Controller
@@ -27,16 +30,14 @@ class MainApp(tk.Tk):
         # --- CẤU HÌNH STYLE TOÀN CỤC CHO TRÌNH CHIẾU ---
         style = ttk.Style()
         style.theme_use("clam")
-        # Cấu hình bảng hiển thị (Treeview) chữ to, hàng cao ráo
         style.configure("Treeview", font=("Arial", 12), rowheight=35, background="#FFFFFF", fieldbackground="#FFFFFF")
         style.configure("Treeview.Heading", font=("Arial", 13, "bold"), background="#E1EBF5", foreground="black")
         style.map("Treeview", background=[("selected", "#3498db")], foreground=[("selected", "white")])
 
-        # Cấu hình ô chọn (Combobox) chữ to dễ bấm
         self.option_add("*TCombobox*Listbox.font", ("Arial", 12))
         style.configure("TCombobox", font=("Arial", 12))
 
-        # 1. KHỞI TẠO SẴN KHUNG SIDEBAR TOÀN CỤC (Rộng 260px để chứa chữ to công cộng)
+        # 1. KHỞI TẠO SẴN KHUNG SIDEBAR TOÀN CỤC
         self.sidebar = tk.Frame(self, bg="#A3C9E8", width=260)
 
         # 2. KHỞI TẠO CONTAINER CHỨA NỘI DUNG CÁC TRANG CON
@@ -57,12 +58,9 @@ class MainApp(tk.Tk):
         self.show("LoginPage")
 
     def _init_frames(self):
-        """Khởi tạo tất cả các View và đưa vào bộ nhớ grid của container"""
         self.pages["LoginPage"] = LoginPage(self.container, self.login_controller)
-
         self.pages["HomePage"] = HomePage(self.container, self.home_controller)
         self.home_controller.set_view(self.pages["HomePage"])
-
         self.pages["Thu_Page"] = Thu_Page(self.container, self.thu_controller)
         self.thu_controller.set_view(self.pages["Thu_Page"])
         self.pages["Chi_Page"] = Chi_Page(self.container, self.chi_controller)
@@ -76,22 +74,34 @@ class MainApp(tk.Tk):
             f.grid(row=0, column=0, sticky="nsew")
 
     def login_ok(self):
-        """Xử lý giao diện sau khi đăng nhập thành công: Định vị Sidebar cố định bên trái"""
+        """Xử lý giao diện sau khi đăng nhập thành công"""
         for widget in self.sidebar.winfo_children():
             widget.destroy()
 
         self.container.pack_forget()
-
-        # Đẩy Sidebar cố định sang sát mép trái, rộng 260px cho thoáng
         self.sidebar.pack(side="left", fill="y")
         self.sidebar.pack_propagate(False)
-
         self.container.pack(side="right", fill="both", expand=True)
 
-        # --- THIẾT KẾ CÁC NÚT ĐIỀU HƯỚNG TRÊN SIDEBAR CHUNG (PHÓNG TO FONT) ---
-        tk.Label(self.sidebar, text="\n QUẢN LÝ \n TÀI CHÍNH \n CÁ NHÂN \n", font=("Comic Sans MS", 16, "bold"), fg="#245C8F",
-                 bg="#A3C9E8").pack(pady=20)
+        # 🔥 2. THAY THẾ CHỮ TIÊU ĐỀ THÀNH logo
+        logo_path = "database/anh.png"
+        if os.path.exists(logo_path):
+            try:
+                img_open = Image.open(logo_path)
+                # Tự động căn chỉnh kích thước ảnh vừa khít thanh sidebar (Rộng 200px, Cao tự căn chỉnh theo tỉ lệ)
+                w_percent = (200 / float(img_open.size[0]))
+                h_size = int((float(img_open.size[1]) * float(w_percent)))
+                img_resized = img_open.resize((200, h_size), Image.Resampling.LANCZOS)
 
+                # Ép kiểu ảnh sang định dạng Tkinter (Dùng self.logo_image để tránh lỗi Garbage Collector làm mất ảnh)
+                self.logo_image = ImageTk.PhotoImage(img_resized)
+
+                lbl_logo = tk.Label(self.sidebar, image=self.logo_image, bg="#A3C9E8")
+                lbl_logo.pack(pady=25)
+            except Exception:
+                pass
+
+        # --- CÁC NÚT ĐIỀU HƯỚNG ---
         tk.Button(self.sidebar, text="🏠 TRANG CHỦ", bg="#8AB8DD", fg="black", font=("Arial", 13, "bold"), height=2,
                   bd=0, cursor="hand2",
                   command=lambda: self.show("HomePage")).pack(fill="x", padx=15, pady=6)
@@ -157,39 +167,95 @@ class MainApp(tk.Tk):
 
     def import_csv(self):
         file_path = filedialog.askopenfilename(
-            title="Chọn file dữ liệu CSV để Import",
+            title="Chọn file dữ liệu CSV để Import vào phần mềm",
             filetypes=[("CSV Files", "*.csv")]
         )
-        if file_path:
-            try:
-                if not os.path.exists('data'):
-                    os.makedirs('data')
-                shutil.copy(file_path, 'data/khoan_chi.csv')
-                if "Chi_Page" in self.pages:
-                    self.chi_controller.load_data()
-                if "NganSach_Page" in self.pages:
-                    self.ngansach_controller.load_data()
-                messagebox.showinfo("Thành công",
-                                    "Đã import dữ liệu thành công! Hệ thống đã tự động cập nhật lại các bảng dữ liệu.")
-            except Exception as e:
-                messagebox.showerror("Lỗi", f"Không thể import file: {str(e)}")
+        if not file_path: return
+
+        try:
+            df_test = pd.read_csv(file_path)
+            if 'NguonThu' in df_test.columns:
+                target_file = 'data/khoan_thu.csv'
+                loai_data = "Khoản Thu Nhập"
+            elif 'NguonChi' in df_test.columns:
+                target_file = 'data/khoan_chi.csv'
+                loai_data = "Khoản Chi Tiêu"
+            else:
+                messagebox.showerror("Lỗi cấu trúc",
+                                     "File CSV không đúng định dạng!\nFile phải có cột 'NguonThu' hoặc 'NguonChi'.")
+                return
+
+            if not os.path.exists('data'): os.makedirs('data')
+
+            # Áp dụng giải pháp gộp dữ liệu động bằng Pandas đã tối ưu thay vì copy đè của bài trước bồ nhé
+            if os.path.exists(target_file):
+                df_old = pd.read_csv(target_file)
+                df_combined = pd.concat([df_old, df_test], ignore_index=True).drop_duplicates()
+                df_combined.to_csv(target_file, index=False, encoding='utf-8-sig')
+            else:
+                df_test.to_csv(target_file, index=False, encoding='utf-8-sig')
+
+            if "Thu_Page" in self.pages and hasattr(self, 'thu_controller'): self.thu_controller.load_data()
+            if "Chi_Page" in self.pages and hasattr(self, 'chi_controller'): self.chi_controller.load_data()
+            if "NganSach_Page" in self.pages and hasattr(self,
+                                                         'ngansach_controller'): self.ngansach_controller.load_data()
+            if "HomePage" in self.pages and hasattr(self, 'home_controller'): self.home_controller.load_data()
+            if "PhanTich_Page" in self.pages and hasattr(self,
+                                                         'phantich_controller'): self.phantich_controller.load_data_and_draw_chart()
+
+            messagebox.showinfo("Thành công", f"Đã import dữ liệu [{loai_data}] thành công!")
+        except Exception as e:
+            messagebox.showerror("Lỗi hệ thống", f"Không thể import file: {str(e)}")
 
     def export_csv(self):
-        source_file = 'data/khoan_chi.csv'
-        if not os.path.exists(source_file):
-            messagebox.showwarning("Cảnh báo", "Hiện tại ứng dụng chưa có dữ liệu khoản chi để xuất!")
-            return
-        save_path = filedialog.asksaveasfilename(
-            title="Chọn nơi lưu file CSV được xuất",
-            defaultextension=".csv",
-            filetypes=[("CSV Files", "*.csv")]
-        )
-        if save_path:
-            try:
-                shutil.copy(source_file, save_path)
-                messagebox.showinfo("Thành công", f"Đã xuất dữ liệu thành công tại:\n{save_path}")
-            except Exception as e:
-                messagebox.showerror("Lỗi", f"Không thể xuất file: {str(e)}")
+        export_window = tk.Toplevel(self)
+        export_window.title("Xuất dữ liệu")
+        export_window.geometry("380x150")
+        export_window.resizable(False, False)
+        export_window.grab_set()
+
+        export_window.update_idletasks()
+        x = self.winfo_x() + (self.winfo_width() // 2) - (export_window.winfo_width() // 2)
+        y = self.winfo_y() + (self.winfo_height() // 2) - (export_window.winfo_height() // 2)
+        export_window.geometry(f"+{x}+{y}")
+
+        tk.Label(export_window, text="Bạn muốn xuất dữ liệu nào?", font=("Arial", 12, "bold")).pack(pady=15)
+        button_frame = tk.Frame(export_window)
+        button_frame.pack(pady=5)
+
+        def thuc_hien_export(loai_chon):
+            export_window.destroy()
+            if loai_chon == "thu":
+                source_file = "data/khoan_thu.csv"
+                default_name = "baocao_khoanthu.csv"
+                dialog_title = "Lưu file Khoản Thu Nhập ra máy tính"
+            else:
+                source_file = "data/khoan_chi.csv"
+                default_name = "baocao_khoanchi.csv"
+                dialog_title = "Lưu file Khoản Chi Tiêu ra máy tính"
+
+            if not os.path.exists(source_file):
+                messagebox.showwarning("Thông báo", "Chưa có dữ liệu nào để xuất cả!")
+                return
+
+            save_path = filedialog.asksaveasfilename(
+                initialfile=default_name,
+                defaultextension=".csv",
+                filetypes=[("CSV Files", "*.csv"), ("All Files", "*.*")],
+                title=dialog_title
+            )
+
+            if save_path:
+                try:
+                    shutil.copy(source_file, save_path)
+                    messagebox.showinfo("Thành công", f"Đã xuất dữ liệu thành công tại:\n{save_path}")
+                except Exception as e:
+                    messagebox.showerror("Lỗi", f"Không thể xuất file: {str(e)}")
+
+        tk.Button(button_frame, text="💰 Khoản Thu", bg="#2ecc71", fg="white", font=("Arial", 11, "bold"),
+                  cursor="hand2", command=lambda: thuc_hien_export("thu")).pack(side="left", padx=10)
+        tk.Button(button_frame, text="💸 Khoản Chi", bg="#e74c3c", fg="white", font=("Arial", 11, "bold"),
+                  cursor="hand2", command=lambda: thuc_hien_export("chi")).pack(side="left", padx=10)
 
     def open_pdf_guide(self):
         pdf_path = "huong_dan.pdf"
@@ -219,3 +285,8 @@ class MainApp(tk.Tk):
             "- Mô hình tính toán: Pandas & Numpy\n"
             "- Đồ thị trực quan: Matplotlib"
         )
+
+
+if __name__ == "__main__":
+    app = MainApp()
+    app.mainloop()

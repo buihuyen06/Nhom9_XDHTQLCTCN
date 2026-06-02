@@ -1,6 +1,7 @@
 ID,Ngay,NguonThu,SoTien,PhuongThuc,GhiChu
-1,27/05/2026,lương,3000000.0,Ngân hàng,
-2,27/05/2026,mẹ cho,50000.0,Tiền mặt,mua đồ
-3,27/05/2026,bố cho,500000.0,Ngân hàng,
-4,24/05/2026,làm thêm,100000.0,Ngân hàng,
-5,23/01/2026,nhận lương,200000.0,Ngân hàng,
+1,05/01/2026,Tiền chu cấp,3000000,Ngân hàng,Tiền sinh hoạt tháng 1
+2,10/01/2026,Làm thêm,1500000,Ngân hàng,Lương part-time
+3,15/01/2026,Dự án HandyGear,450000,Ngân hàng,Bán đồ handmade linh kiện máy tính
+4,20/01/2026,Học bổng,5000000,Ngân hàng,Học bổng kỳ 1
+5,25/01/2026,Dự án HandyGear,250000,Tiền mặt,Khách mua trực tiếp
+6,28/01/2026,Người thân cho,500000,Ngân hàng,Chị Linh cho tiền tiêu vặt
