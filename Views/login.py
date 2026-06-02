@@ -7,7 +7,7 @@ class LoginPage(tk.Frame):
         self.controller = controller
 
         # Giao diện màn hình khóa bảo mật (Đẩy khoảng cách rộng rãi)
-        tk.Label(self, text="QUẢN LÝ TÀI CHÍNH CÁ NHÂN", font=("Arial", 26, "bold"), fg="#2c3e50", bg="#F5F5F5").pack(
+        tk.Label(self, text="QUẢN LÝ CHI TIÊU CÁ NHÂN", font=("Arial", 26, "bold"), fg="#2c3e50", bg="#F5F5F5").pack(
             pady=(140, 10)) # Font 20 -> 26, pady (80, 5) -> (140, 10)
         tk.Label(self, text="Vui lòng xác thực quyền truy cập để xem dữ liệu chi tiêu", font=("Arial", 14, "italic"),
                  fg="#7f8c8d", bg="#F5F5F5").pack(pady=(0, 50)) # Font 11 -> 14

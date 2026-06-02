@@ -24,7 +24,7 @@ from Views.ngansach import NganSach_Page
 class MainApp(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("QUẢN LÝ TÀI CHÍNH CÁ NHÂN")
+        self.title("Xây dựng hệ thống quản lý chi tiêu cá nhân - Nhóm 9")
         self.geometry("1800x800")
 
         # --- CẤU HÌNH STYLE TOÀN CỤC CHO TRÌNH CHIẾU ---
