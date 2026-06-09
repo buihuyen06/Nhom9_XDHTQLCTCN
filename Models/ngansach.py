@@ -5,13 +5,13 @@ import os
 
 class NganSach_Model:
     def __init__(self):
-        self.file_path = 'data/ngan_sach.csv'
-        self.chi_file = 'data/khoan_chi.csv'
+        self.file_path = 'database/ngan_sach.csv'
+        self.chi_file = 'database/khoan_chi.csv'
         self.ensure_file_exists()
 
     def ensure_file_exists(self):
-        if not os.path.exists('data'):
-            os.makedirs('data')
+        if not os.path.exists('database'):
+            os.makedirs('database')
         if not os.path.exists(self.file_path):
             df = pd.DataFrame(columns=['NguonChi', 'HanMuc'])
             df.to_csv(self.file_path, index=False, encoding='utf-8')

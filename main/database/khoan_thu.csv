@@ -1,2 +1,4 @@
-ID,Ngày,Nguồn,Số tiền,Phương thức,Ghi chú
-TH01,15/01/2025,Lương,1500000.0,Ngân hàng,Lương tháng 1
+ID,Ngay,NguonThu,SoTien,PhuongThuc,GhiChu
+1,01/06/2026,chị gái cho,50000.0,Ngân hàng,tết thiếu nhi
+2,05/06/2026,nhận lương,5000000.0,Ngân hàng,lương làm thêm tháng 5
+3,09/06/2026,bán tài liệu,700000.0,Tiền mặt,môn csdl

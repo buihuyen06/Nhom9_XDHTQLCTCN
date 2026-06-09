@@ -5,13 +5,13 @@ import os
 class FinanceModel:
     def __init__(self):
         # Đường dẫn tới file csv trong thư mục data
-        self.file_path = 'data/data.csv'
+        self.file_path = 'database/data.csv'
         self.ensure_file_exists()
 
     def ensure_file_exists(self):
         # Tạo thư mục data nếu chưa có
-        if not os.path.exists('data'):
-            os.makedirs('data')
+        if not os.path.exists('database'):
+            os.makedirs('database')
         # Tạo file csv với tiêu đề nếu chưa có
         if not os.path.exists(self.file_path):
             with open(self.file_path, mode='w', newline='', encoding='utf-8') as f:

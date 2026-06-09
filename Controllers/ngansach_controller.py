@@ -17,10 +17,8 @@ class NganSach_Controller:
         if not self.view or not hasattr(self.view, 'tree'):
             return
 
-        # 1. Cấu hình màu chữ ĐỎ cho tag 'am_tien' trong bảng Treeview
         self.view.tree.tag_configure('am_tien', foreground='red', font=("Arial", 10, "bold"))
 
-        # Xóa dữ liệu cũ trên bảng
         for row in self.view.tree.get_children():
             self.view.tree.delete(row)
 
@@ -32,7 +30,6 @@ class NganSach_Controller:
             da_chi_str = f"{row[2]:,.0f}"
             con_lai_str = f"{row[3]:,.0f}"
 
-            # 2. Kiểm tra xem số tiền "Ngân Sách Còn Lại" (row[3]) có bị âm không
             is_negative = False
             try:
                 if float(row[3]) < 0:
@@ -40,14 +37,12 @@ class NganSach_Controller:
             except (ValueError, TypeError):
                 pass
 
-            # 3. Nếu bị âm thì chèn thêm tag='am_tien' để chuyển chữ thành màu đỏ
             if is_negative:
                 self.view.tree.insert("", "end", values=(row[0], han_muc_str, da_chi_str, con_lai_str),
                                       tags=('am_tien',))
             else:
                 self.view.tree.insert("", "end", values=(row[0], han_muc_str, da_chi_str, con_lai_str))
     def show_add_dialog(self):
-        """TRANG RIÊNG: Hộp thoại Thêm Mới"""
         dialog = tk.Toplevel(self.root)
         dialog.title("➕ Thêm Ngân Sách Mới")
         dialog.geometry("320x200")
@@ -81,7 +76,6 @@ class NganSach_Controller:
                 messagebox.showerror("Lỗi", "Hạn mức phải là số dương hợp lệ!", parent=dialog)
                 return
 
-            # Kiểm tra trùng nguồn chi
             existing_budgets = self.model.get_all_with_spending()
             if any(b[0].lower() == nguonchi.lower() for b in existing_budgets):
                 messagebox.showerror("Lỗi", f"Nguồn chi '{nguonchi}' đã tồn tại ngân sách!", parent=dialog)
@@ -96,7 +90,6 @@ class NganSach_Controller:
                   command=save_new, width=12).grid(row=2, column=0, columnspan=2, pady=15)
 
     def show_edit_dialog(self):
-        """TRANG RIÊNG: Hộp thoại Sửa Hạn Mức"""
         selected_item = self.view.tree.selection()
         if not selected_item:
             messagebox.showwarning("Nhắc nhở", "Vui lòng click chọn một dòng trong bảng để chỉnh sửa!")
@@ -159,7 +152,6 @@ class NganSach_Controller:
             messagebox.showinfo("Thông báo", f"Đã xóa theo dõi nguồn '{nguonchi}'!")
 
     def search_budget(self, event=None):
-        """Tìm kiếm nguồn chi real-time"""
         keyword = self.view.entry_search.get().strip().lower()
         all_records = self.model.get_all_with_spending()
 

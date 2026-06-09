@@ -5,13 +5,13 @@ import os
 
 class Thu_Model:
     def __init__(self):
-        self.file_path = 'data/khoan_thu.csv'
+        self.file_path = 'database/khoan_thu.csv'
         self.ensure_file_exists()
 
     def ensure_file_exists(self):
         """Tự động tạo thư mục và file csv bằng Pandas"""
-        if not os.path.exists('data'):
-            os.makedirs('data')
+        if not os.path.exists('database'):
+            os.makedirs('database')
         if not os.path.exists(self.file_path):
             df = pd.DataFrame(columns=['ID', 'Ngay', 'NguonThu', 'SoTien', 'PhuongThuc', 'GhiChu'])
             df.to_csv(self.file_path, index=False, encoding='utf-8')

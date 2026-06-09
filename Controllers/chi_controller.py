@@ -70,7 +70,7 @@ class Chi_Controller:
 
             self.view.tree.insert("", "end", values=(row[0], row[1], row[2], tien_str, row[4], row[5]))
 
-        # Cập nhật nhãn hiển thị chính xác theo file khoanchi.py của bồ
+
         if hasattr(self.view, 'lbl_total'):
             self.view.lbl_total.config(text=f"TỔNG CHI: {tong_chi:,.0f} VND")
         if hasattr(self.view, 'lbl_bank'):
@@ -78,9 +78,6 @@ class Chi_Controller:
         if hasattr(self.view, 'lbl_cash'):
             self.view.lbl_cash.config(text=f"💵 Tiền mặt: {tong_tm:,.0f} đ")
 
-    # =========================================================
-    # CHỨC NĂNG: LỌC THEO THÁNG / NĂM
-    # =========================================================
     def filter_by_month(self, month, year):
         if hasattr(self.model, 'get_all'):
             all_records = self.model.get_all()
@@ -96,7 +93,6 @@ class Chi_Controller:
             self.load_data(filtered_records)
 
     def get_danh_sach_nguon_chi(self):
-        """Lấy danh sách danh mục nạp vào Combobox"""
         nguon_chi_list = []
         try:
             ns_model = NganSach_Model()
@@ -108,10 +104,6 @@ class Chi_Controller:
         if not nguon_chi_list:
             nguon_chi_list = ["Ăn uống", "Đi lại", "Mua sắm", "Khác"]
         return nguon_chi_list
-
-    # ==========================================
-    # 1. CHỨC NĂNG: THÊM KHOẢN CHI MỚI
-    # ==========================================
     def show_add_dialog(self):
         dialog = tk.Toplevel(self.root)
         dialog.title("Thêm Khoản Chi Mới")
@@ -169,15 +161,11 @@ class Chi_Controller:
             self.load_data()
             dialog.destroy()
 
-            # 👇 ẤN LƯU XONG LÀ QUÉT KIỂM TRA VÀ HIỆN MESSAGE CẢNH BÁO LUÔN
             self.kiem_tra_va_canh_bao_ngan_sach(nguon)
 
         tk.Button(form, text="Lưu Lại", bg="#2ecc71", fg="white", font=("Arial", 10, "bold"),
                   command=save, width=15).grid(row=5, column=0, columnspan=2, pady=15)
 
-    # ==========================================
-    # 2. CHỨC NĂNG: CHỈNH SỬA KHOẢN CHI
-    # ==========================================
     def show_edit_dialog(self):
         selected_item = self.view.tree.selection()
         if not selected_item:
@@ -246,15 +234,12 @@ class Chi_Controller:
             self.load_data()
             dialog.destroy()
 
-            # 👇 ẤN CẬP NHẬT XONG LÀ QUÉT KIỂM TRA VÀ HIỆN MESSAGE CẢNH BÁO LUÔN
+
             self.kiem_tra_va_canh_bao_ngan_sach(nguon)
 
         tk.Button(form, text="Cập Nhật", bg="#3498db", fg="white", font=("Arial", 10, "bold"),
                   command=save_edit, width=15).grid(row=5, column=0, columnspan=2, pady=15)
 
-    # ==========================================
-    # XÓA BẢN GHI & TÌM KIẾM POP-UP
-    # ==========================================
     def delete_record(self):
         selected_item = self.view.tree.selection()
         if not selected_item:
@@ -262,7 +247,7 @@ class Chi_Controller:
             return
         item_data = self.view.tree.item(selected_item[0])['values']
         id_xoa = str(item_data[0])
-        if messagebox.askyesno("Xác nhận", "Bồ có chắc muốn xóa khoản chi này không?"):
+        if messagebox.askyesno("Xác nhận", "Bạn có chắc muốn xóa khoản chi này không?"):
             if hasattr(self.model, 'delete'): self.model.delete(id_xoa)
             self.load_data()
 

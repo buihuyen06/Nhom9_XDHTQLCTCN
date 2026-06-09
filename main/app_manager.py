@@ -27,7 +27,6 @@ class MainApp(tk.Tk):
         self.title("Xây dựng hệ thống quản lý chi tiêu cá nhân - Nhóm 9")
         self.geometry("1800x800")
 
-        # --- CẤU HÌNH STYLE TOÀN CỤC CHO TRÌNH CHIẾU ---
         style = ttk.Style()
         style.theme_use("clam")
         style.configure("Treeview", font=("Arial", 12), rowheight=35, background="#FFFFFF", fieldbackground="#FFFFFF")
@@ -83,7 +82,6 @@ class MainApp(tk.Tk):
         self.sidebar.pack_propagate(False)
         self.container.pack(side="right", fill="both", expand=True)
 
-        # 🔥 2. THAY THẾ CHỮ TIÊU ĐỀ THÀNH logo
         logo_path = "database/anh.png"
         if os.path.exists(logo_path):
             try:
@@ -175,17 +173,17 @@ class MainApp(tk.Tk):
         try:
             df_test = pd.read_csv(file_path)
             if 'NguonThu' in df_test.columns:
-                target_file = 'data/khoan_thu.csv'
+                target_file = 'database/khoan_thu.csv'
                 loai_data = "Khoản Thu Nhập"
             elif 'NguonChi' in df_test.columns:
-                target_file = 'data/khoan_chi.csv'
+                target_file = 'database/khoan_chi.csv'
                 loai_data = "Khoản Chi Tiêu"
             else:
                 messagebox.showerror("Lỗi cấu trúc",
                                      "File CSV không đúng định dạng!\nFile phải có cột 'NguonThu' hoặc 'NguonChi'.")
                 return
 
-            if not os.path.exists('data'): os.makedirs('data')
+            if not os.path.exists('database'): os.makedirs('database')
 
             # Áp dụng giải pháp gộp dữ liệu động bằng Pandas đã tối ưu thay vì copy đè của bài trước bồ nhé
             if os.path.exists(target_file):
@@ -226,16 +224,16 @@ class MainApp(tk.Tk):
         def thuc_hien_export(loai_chon):
             export_window.destroy()
             if loai_chon == "thu":
-                source_file = "data/khoan_thu.csv"
+                source_file = "database/khoan_thu.csv"
                 default_name = "baocao_khoanthu.csv"
                 dialog_title = "Lưu file Khoản Thu Nhập ra máy tính"
             else:
-                source_file = "data/khoan_chi.csv"
+                source_file = "database/khoan_chi.csv"
                 default_name = "baocao_khoanchi.csv"
                 dialog_title = "Lưu file Khoản Chi Tiêu ra máy tính"
 
             if not os.path.exists(source_file):
-                messagebox.showwarning("Thông báo", "Chưa có dữ liệu nào để xuất cả!")
+                messagebox.showwarning("Thông báo", "Chưa có dữ liệu nào để xuất!")
                 return
 
             save_path = filedialog.asksaveasfilename(
@@ -285,8 +283,3 @@ class MainApp(tk.Tk):
             "- Mô hình tính toán: Pandas & Numpy\n"
             "- Đồ thị trực quan: Matplotlib"
         )
-
-
-if __name__ == "__main__":
-    app = MainApp()
-    app.mainloop()

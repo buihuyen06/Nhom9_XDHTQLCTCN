@@ -5,13 +5,13 @@ import os
 
 class Chi_Model:
     def __init__(self):
-        self.file_path = 'data/khoan_chi.csv'
+        self.file_path = 'database/khoan_chi.csv'
         self.ensure_file_exists()
 
     def ensure_file_exists(self):
         """Tự động tạo thư mục data và file csv bằng Pandas nếu chưa có"""
-        if not os.path.exists('data'):
-            os.makedirs('data')
+        if not os.path.exists('database'):
+            os.makedirs('database')
         if not os.path.exists(self.file_path):
             # Dùng pandas tạo cấu trúc file mẫu
             df = pd.DataFrame(columns=['ID', 'Ngay', 'NguonChi', 'SoTien', 'PhuongThuc', 'GhiChu'])

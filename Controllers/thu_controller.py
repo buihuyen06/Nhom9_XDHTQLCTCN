@@ -229,7 +229,7 @@ class Thu_Controller:
         income_id = item_data[0]
 
         confirm = messagebox.askyesno("Xác nhận xóa",
-                                      f"Bồ có chắc chắn muốn xóa khoản thu nhập '{item_data[2]}' không?")
+                                      f"Bạn có chắc chắn muốn xóa khoản thu nhập '{item_data[2]}' không?")
         if confirm:
             self.model.delete(income_id)
             self.load_data()
