@@ -16,7 +16,7 @@ class FinanceModel:
         if not os.path.exists(self.file_path):
             with open(self.file_path, mode='w', newline='', encoding='utf-8') as f:
                 writer = csv.writer(f)
-                writer.writerow(['ID', 'Ngay', 'NoiDung', 'Loai', 'SoTien'])
+                writer.writerow(['ID', 'Ngay', 'NoiDung', 'Loai', 'SoTien',])
 
     def get_all(self):
         records = []
