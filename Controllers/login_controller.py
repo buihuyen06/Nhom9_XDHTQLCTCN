@@ -10,6 +10,6 @@ class LoginController:
 
     def check_login(self, username, password):
         if username == self.SECURE_USER and password == self.SECURE_PASS:
-            self.app.login_ok()  # Đúng mật khẩu -> Bảo MainApp mở khóa ứng dụng
+            self.app.login_ok()
         else:
             messagebox.showerror("Truy cập bị từ chối", "Sai tên đăng nhập hoặc mật khẩu bảo vệ!")

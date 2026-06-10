@@ -1,6 +1,6 @@
-import tkinter as tk
 from tkinter import messagebox
 from Models.ngansach import NganSach_Model
+from Views.ngansach_dialog import AddNganSachDialog, EditNganSachDialog
 
 
 class NganSach_Controller:
@@ -42,52 +42,18 @@ class NganSach_Controller:
                                       tags=('am_tien',))
             else:
                 self.view.tree.insert("", "end", values=(row[0], han_muc_str, da_chi_str, con_lai_str))
+
     def show_add_dialog(self):
-        dialog = tk.Toplevel(self.root)
-        dialog.title("➕ Thêm Ngân Sách Mới")
-        dialog.geometry("320x200")
-        dialog.resizable(False, False)
-        dialog.grab_set()
+        # Lấy danh sách tên nguồn chi hiện có để truyền vào View kiểm tra trùng lặp
+        existing_budgets = self.model.get_all_with_spending()
+        existing_names = [b[0].lower() for b in existing_budgets]
 
-        form = tk.Frame(dialog, padx=15, pady=15)
-        form.pack(fill="both", expand=True)
+        AddNganSachDialog(self.root, existing_names, self.process_add)
 
-        tk.Label(form, text="Nguồn chi:").grid(row=0, column=0, sticky="w", pady=8)
-        entry_nguonchi = tk.Entry(form, width=20)
-        entry_nguonchi.grid(row=0, column=1, pady=8)
-        entry_nguonchi.focus()
-
-        tk.Label(form, text="Hạn Mức (VND):").grid(row=1, column=0, sticky="w", pady=8)
-        entry_limit = tk.Entry(form, width=20)
-        entry_limit.grid(row=1, column=1, pady=8)
-
-        def save_new():
-            nguonchi = entry_nguonchi.get().strip()
-            limit_str = entry_limit.get().strip()
-
-            if not nguonchi or not limit_str:
-                messagebox.showerror("Lỗi", "Vui lòng không bỏ trống thông tin!", parent=dialog)
-                return
-
-            try:
-                limit = float(limit_str)
-                if limit < 0: raise ValueError
-            except ValueError:
-                messagebox.showerror("Lỗi", "Hạn mức phải là số dương hợp lệ!", parent=dialog)
-                return
-
-            existing_budgets = self.model.get_all_with_spending()
-            if any(b[0].lower() == nguonchi.lower() for b in existing_budgets):
-                messagebox.showerror("Lỗi", f"Nguồn chi '{nguonchi}' đã tồn tại ngân sách!", parent=dialog)
-                return
-
-            self.model.add_or_update(nguonchi, limit)
-            self.load_data()
-            dialog.destroy()
-            messagebox.showinfo("Thành công", f"Đã thêm ngân sách cho nguồn '{nguonchi}'!")
-
-        tk.Button(form, text="➕ THÊM MỚI", bg="#2ecc71", fg="white", font=("Arial", 10, "bold"),
-                  command=save_new, width=12).grid(row=2, column=0, columnspan=2, pady=15)
+    def process_add(self, nguonchi, limit):
+        self.model.add_or_update(nguonchi, limit)
+        self.load_data()
+        messagebox.showinfo("Thành công", f"Đã thêm ngân sách cho nguồn '{nguonchi}'!")
 
     def show_edit_dialog(self):
         selected_item = self.view.tree.selection()
@@ -99,41 +65,12 @@ class NganSach_Controller:
         nguonchi_cu = item_data[0]
         hanmuc_cu = str(item_data[1]).replace(",", "")
 
-        dialog = tk.Toplevel(self.root)
-        dialog.title("🔧 Chỉnh Sửa Hạn Mức")
-        dialog.geometry("320x200")
-        dialog.resizable(False, False)
-        dialog.grab_set()
+        EditNganSachDialog(self.root, nguonchi_cu, hanmuc_cu, self.process_update)
 
-        form = tk.Frame(dialog, padx=15, pady=15)
-        form.pack(fill="both", expand=True)
-
-        tk.Label(form, text="Nguồn chi:").grid(row=0, column=0, sticky="w", pady=8)
-        lbl_nguonchi = tk.Label(form, text=nguonchi_cu, font=("Arial", 10, "bold"), fg="#2c3e50")
-        lbl_nguonchi.grid(row=0, column=1, sticky="w", pady=8)
-
-        tk.Label(form, text="Hạn Mức Mới:").grid(row=1, column=0, sticky="w", pady=8)
-        entry_limit = tk.Entry(form, width=20)
-        entry_limit.insert(0, hanmuc_cu)
-        entry_limit.grid(row=1, column=1, pady=8)
-        entry_limit.focus()
-
-        def save_edit():
-            limit_str = entry_limit.get().strip()
-            try:
-                limit = float(limit_str)
-                if limit < 0: raise ValueError
-            except ValueError:
-                messagebox.showerror("Lỗi", "Hạn mức phải là số dương hợp lệ!", parent=dialog)
-                return
-
-            self.model.add_or_update(nguonchi_cu, limit)
-            self.load_data()
-            dialog.destroy()
-            messagebox.showinfo("Thành công", f"Đã cập nhật lại hạn mức nguồn '{nguonchi_cu}'!")
-
-        tk.Button(form, text="💾 CẬP NHẬT", bg="#3498db", fg="white", font=("Arial", 10, "bold"),
-                  command=save_edit, width=12).grid(row=2, column=0, columnspan=2, pady=15)
+    def process_update(self, nguonchi_cu, limit):
+        self.model.add_or_update(nguonchi_cu, limit)
+        self.load_data()
+        messagebox.showinfo("Thành công", f"Đã cập nhật lại hạn mức nguồn '{nguonchi_cu}'!")
 
     def delete_budget(self):
         """Chức năng Xóa mục"""
@@ -152,6 +89,7 @@ class NganSach_Controller:
             messagebox.showinfo("Thông báo", f"Đã xóa theo dõi nguồn '{nguonchi}'!")
 
     def search_budget(self, event=None):
+        """Tìm kiếm trực tiếp từ thanh tìm kiếm trên màn hình (không dùng Popup)"""
         keyword = self.view.entry_search.get().strip().lower()
         all_records = self.model.get_all_with_spending()
 

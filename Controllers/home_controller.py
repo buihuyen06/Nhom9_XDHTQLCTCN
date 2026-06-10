@@ -8,7 +8,7 @@ class HomeController:
         self.root = root
         self.thu_model = Thu_Model()
         self.chi_model = Chi_Model()
-        self.view = None  # Sẽ được gán và hiển thị thông qua bộ quản lý file chính MainApp
+        self.view = None
 
     def set_view(self, view):
         self.view = view

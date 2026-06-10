@@ -28,7 +28,7 @@ class Thu_Model:
     def add(self, ngay, nguon_thu, so_tien, phuong_thuc, ghi_chu):
         records = self.get_all()
         try:
-            so_tien = float(so_tien)
+            so_tien = int(so_tien)
         except:
             so_tien = 0.0
         if len(records) == 0:
@@ -56,7 +56,6 @@ class Thu_Model:
         df.loc[df['ID'] == target_id, ['Ngay', 'NguonThu', 'SoTien', 'PhuongThuc', 'GhiChu']] =  [ngay, nguon_thu, float(so_tien), phuong_thuc, ghi_chu]
 
         df.to_csv(self.file_path, index=False, encoding='utf-8-sig')
-
 
     def delete(self, thu_id):
         if not os.path.exists(self.file_path):
