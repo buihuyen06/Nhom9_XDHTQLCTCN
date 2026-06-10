@@ -1,4 +1,5 @@
-ID,Ngay,NguonChi,SoTien,PhuongThuc,GhiChu
-1,02/06/2026,Học thêm,300000,Ngân hàng,
-2,09/06/2026,Ăn uống,25000,Ngân hàng,mua cơm
-3,09/06/2026,Ăn uống,500000,Ngân hàng,
+﻿ID,Ngay,NguonChi,SoTien,PhuongThuc,GhiChu
+1,1/5/2026,Ăn uống,250000,Tiền mặt,Ăn đầu tháng
+2,6/5/2026,Học tập,450000,Ngân hàng,Mua sách
+3,9/5/2026,Mua sắm,650000,Ngân hàng,Mua quần áo
+4,20/5/2026,Giải trí,200000,Tiền mặt,Xem phim

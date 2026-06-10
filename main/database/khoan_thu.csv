@@ -1,4 +1,8 @@
-ID,Ngay,NguonThu,SoTien,PhuongThuc,GhiChu
-1,01/06/2026,chị gái cho,50000.0,Ngân hàng,tết thiếu nhi
-2,05/06/2026,nhận lương,5000000.0,Ngân hàng,lương làm thêm tháng 5
-3,09/06/2026,bán tài liệu,700000.0,Tiền mặt,môn csdl
+ID,Ngay,NguonThu,SoTien,PhuongThuc,GhiChu,NguonChi
+4,12/05/2026,Làm gia sư,120000.0,Tiền mặt,Dạy kèm học sinh,Làm gia sư
+5,15/05/2026,Bán đồ cũ,400000.0,Tiền mặt,Bán sách và tài liệu,
+6,18/05/2026,Cộng tác viên,900000.0,Ngân hàng,Viết nội dung online,
+7,22/05/2026,Bán hàng online,600000.0,Ngân hàng,Bán phụ kiện,
+8,25/05/2026,Quà tặng,300000.0,Tiền mặt,Sinh nhật,
+9,28/05/2026,Lãi tiết kiệm,150000.0,Ngân hàng,Lãi ngân hàng,
+10,10/06/2026,đi làm,300000.0,Ngân hàng,viết bài

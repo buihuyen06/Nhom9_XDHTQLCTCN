@@ -31,7 +31,10 @@ class Chi_Model:
     def add(self, ngay, nguon_chi, so_tien, phuong_thuc, ghi_chu):
         """Thêm một khoản chi mới với ID tự tăng tính toán bằng Numpy"""
         records = self.get_all()
-
+        try:
+            so_tien = float(so_tien)
+        except:
+            so_tien = 0.0
         # SỬ DỤNG NUMPY: Gom toàn bộ ID lại thành mảng Numpy để tìm ID lớn nhất cực nhanh
         if len(records) == 0:
             new_id = 1
@@ -46,16 +49,23 @@ class Chi_Model:
         return new_id
 
     def update(self, income_id, ngay, nguon_chi, so_tien, phuong_thuc, ghi_chu):
-        """Cập nhật bản ghi theo ID bằng Pandas"""
-        if not os.path.exists(self.file_path):
-            return
+        if not os.path.exists(self.file_path): return
+
         df = pd.read_csv(self.file_path)
-        # Tìm dòng có ID trùng khớp và cập nhật dữ liệu
-        df.loc[df['ID'] == int(income_id), ['Ngay', 'NguonChi', 'SoTien', 'PhuongThuc', 'GhiChu']] = [ngay, nguon_chi,
-                                                                                                      so_tien,
-                                                                                                      phuong_thuc,
-                                                                                                      ghi_chu]
-        df.to_csv(self.file_path, index=False, encoding='utf-8')
+
+        # --- BỘ LỌC DỮ LIỆU ĐỂ TRÁNH LỖI KIỂU ---
+        # 1. Ép toàn bộ cột SoTien về kiểu số, nếu lỗi thì biến thành 0
+        df['SoTien'] = pd.to_numeric(df['SoTien'], errors='coerce').fillna(0)
+
+        # 2. Ép ID về int để so sánh đúng
+        df['ID'] = pd.to_numeric(df['ID'], errors='coerce').fillna(0).astype(int)
+
+        # 3. Thực hiện cập nhật
+        target_id = int(float(income_id))
+        df.loc[df['ID'] == target_id, ['Ngay', 'NguonChi', 'SoTien', 'PhuongThuc', 'GhiChu']] = \
+            [ngay, nguon_chi, float(so_tien), phuong_thuc, ghi_chu]
+
+        df.to_csv(self.file_path, index=False, encoding='utf-8-sig')
 
     def delete(self, income_id):
         """Xóa bản ghi khỏi dữ liệu bằng Pandas"""
