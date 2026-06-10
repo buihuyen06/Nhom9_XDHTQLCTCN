@@ -5,7 +5,7 @@ import pandas as pd
 from tkinter import messagebox, filedialog
 import tkinter as tk
 from tkinter import ttk
-from PIL import Image, ImageTk  # 🔥 1. IMPORT THÊM THƯ VIỆN XỬ LÝ ẢNH
+from PIL import Image, ImageTk
 
 from Controllers.home_controller import HomeController
 from Controllers.login_controller import LoginController
